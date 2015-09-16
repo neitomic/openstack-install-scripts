@@ -1,0 +1,17 @@
+#!/bin/bash
+
+source ../common/openstack.conf
+
+VAR1="112"
+VAR2="212"
+
+
+COUNT="1"
+
+while [ -v "COMPUTE${COUNT}" ];
+do
+	TMP="COMPUTE${COUNT}"
+	echo "${!TMP} wqweqew"
+	COUNT=$[${COUNT}+1]
+done
+
