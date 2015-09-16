@@ -13,7 +13,7 @@ echo "Add controller server..."
 sed -i "/# Please consider joining the pool/a server controller iburst" /etc/ntp.conf
 
 echo "Enable and start ntp service..."
-systemctl enable ntpd.service
-systemctl start ntpd.service
+service ntpd start > /dev/null
+chkconfig ntpd on > /dev/null
 
 echo "DONE! Have a good day! :)"

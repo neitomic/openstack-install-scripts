@@ -12,8 +12,9 @@ echo "Configuring and start ntp service..."
 echo 'restrict -4 default kod notrap nomodify' >> /etc/ntp.conf
 echo 'restrict -6 default kod notrap nomodify' >> /etc/ntp.conf
 
-systemctl enable ntpd.service > /dev/null
-systemctl start ntpd.service > /dev/null
+service ntpd start > /dev/null
+chkconfig ntpd on > /dev/null
+
 echo "Done."
 
 echo "DONE! Have a good day! :)"
