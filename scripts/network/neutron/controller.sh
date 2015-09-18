@@ -12,89 +12,101 @@ echo "Done."
 
 source ${BASE_DIR}/admin-openrc.sh
 
-openstack user create --password ${NEUTRON_PASS} neutron
-
-openstack role add --project service --user neutron admin
-openstack service create --name neutron \
-  --description "OpenStack Networking" network
-
-openstack endpoint create \
+keystone user-create --name neutron --pass ${NEUTRON_PASS} --email neutron@example.com
+keystone user-role-add --user neutron --tenant service --role admin
+keystone service-create --name neutron --type network --description "OpenStack Networking"
+keystone endpoint-create \
+  --service-id $(keystone service-list | awk '/ network / {print $2}') \
   --publicurl http://controller:9696 \
   --adminurl http://controller:9696 \
-  --internalurl http://controller:9696 \
-  --region RegionOne \
-  network
+  --internalurl http://controller:9696
 
-yum install -y openstack-neutron openstack-neutron-ml2 python-neutronclient which
+yum install -y openstack-neutron openstack-neutron-ml2 python-neutronclient > /dev/null
 
-sed -i "/^\[database\]$/a connection = mysql://neutron:${NEUTRON_DBPASS}@controller/neutron" /etc/neutron/neutron.conf
+openstack-config --set /etc/neutron/neutron.conf database connection \
+  mysql://neutron:${NEUTRON_DBPASS}@controller/neutron
 
-sed -i "/^\[DEFAULT\]$/a rpc_backend = rabbit\n\
-auth_strategy = keystone\n\
-core_plugin = ml2\n\
-service_plugins = router\n\
-allow_overlapping_ips = True\n\
-notify_nova_on_port_status_changes = True\n\
-notify_nova_on_port_data_changes = True\n\
-nova_url = http://controller:8774/v2" /etc/neutron/neutron.conf
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  auth_strategy keystone
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken \
+  auth_uri http://controller:5000
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken \
+  auth_host controller
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken \
+  auth_protocol http
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken \
+  auth_port 35357
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken \
+  admin_tenant_name service
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken \
+  admin_user neutron
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken \
+  admin_password ${NEUTRON_PASS}
 
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  rpc_backend neutron.openstack.common.rpc.impl_qpid
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  qpid_hostname controller
 
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  notify_nova_on_port_status_changes True
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  notify_nova_on_port_data_changes True
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  nova_url http://controller:8774/v2
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  nova_admin_username nova
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  nova_admin_tenant_id $(keystone tenant-list | awk '/ service / { print $2 }')
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  nova_admin_password NOVA_PASS
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  nova_admin_auth_url http://controller:35357/v2.0
 
-sed -i "/^\[oslo_messaging_rabbit\]$/a rabbit_host = controller\n\
-rabbit_userid = openstack\n\
-rabbit_password = ${RABBIT_PASS}" /etc/neutron/neutron.conf
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  core_plugin ml2
+openstack-config --set /etc/neutron/neutron.conf DEFAULT \
+  service_plugins router
 
-sed -i "/^\[keystone_authtoken\]$/a auth_uri = http://controller:5000\n\
-auth_url = http://controller:35357\n\
-auth_plugin = password\n\
-project_domain_id = default\n\
-user_domain_id = default\n\
-project_name = service\n\
-username = neutron\n\
-password = ${NEUTRON_PASS}" /etc/neutron/neutron.conf
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 \
+  type_drivers gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 \
+  tenant_network_types gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 \
+  mechanism_drivers openvswitch
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_gre \
+  tunnel_id_ranges 1:1000
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup \
+  firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup \
+  enable_security_group True
 
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+  network_api_class nova.network.neutronv2.api.API
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+  neutron_url http://controller:9696
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+  neutron_auth_strategy keystone
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+  neutron_admin_tenant_name service
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+  neutron_admin_username neutron
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+  neutron_admin_password ${NEUTRON_PASS}
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+  neutron_admin_auth_url http://controller:35357/v2.0
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+  linuxnet_interface_driver nova.network.linux_net.LinuxOVSInterfaceDriver
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+  firewall_driver nova.virt.firewall.NoopFirewallDriver
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+  security_group_api neutron
 
-sed -i "/^\[nova\]$/a auth_url = http://controller:35357\n\
-auth_plugin = password\n\
-project_domain_id = default\n\
-user_domain_id = default\n\
-region_name = RegionOne\n\
-project_name = service\n\
-username = nova\n\
-password = ${NOVA_PASS}" /etc/neutron/neutron.conf
+ln -s plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
 
-sed -i "/^\[ml2\]$/a type_drivers = flat,vlan,gre,vxlan\n\
-tenant_network_types = gre\n\
-mechanism_drivers = openvswitch" /etc/neutron/plugins/ml2/ml2_conf.ini
-
-sed -i "/^\[ml2_type_gre\]$/a tunnel_id_ranges = 1:1000" /etc/neutron/plugins/ml2/ml2_conf.ini
-
-sed -i "/^\[securitygroup\]$/a enable_security_group = True\n\
-enable_ipset = True\n\
-firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver" /etc/neutron/plugins/ml2/ml2_conf.ini
-
-sed -i "/^\[DEFAULT\]$/a network_api_class = nova.network.neutronv2.api.API\n\
-security_group_api = neutron\n\
-linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver\n\
-firewall_driver = nova.virt.firewall.NoopFirewallDriver" /etc/nova/nova.conf
-
-sed -i "/^\[neutron\]$/a url = http://controller:9696\n\
-auth_strategy = keystone\n\
-admin_auth_url = http://controller:35357/v2.0\n\
-admin_tenant_name = service\n\
-admin_username = neutron\n\
-admin_password = ${NEUTRON_PASS}" /etc/nova/nova.conf
-
-ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
-
-su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
-  --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
-
-systemctl restart openstack-nova-api.service openstack-nova-scheduler.service \
-  openstack-nova-conductor.service
-
-systemctl enable neutron-server.service
-systemctl start neutron-server.service
-
-
+service openstack-nova-api restart
+service openstack-nova-scheduler restart
+service openstack-nova-conductor restart
+service neutron-server start
+chkconfig neutron-server on
 
