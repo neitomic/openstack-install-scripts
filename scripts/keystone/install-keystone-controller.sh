@@ -47,7 +47,7 @@ echo "Crontab schedulling auto flush token hourly..."
 echo '@hourly /usr/bin/keystone-manage token_flush >/var/log/keystone/keystone-tokenflush.log 2>&1' >> /var/spool/cron/keystone
 echo "Done."
 
-export OS_SERVICE_TOKEN=ADMIN_TOKEN
+export OS_SERVICE_TOKEN=${TOKEN}
 export OS_SERVICE_ENDPOINT=http://controller:35357/v2.0
 
 echo "Creating admin user, role and tenant..."

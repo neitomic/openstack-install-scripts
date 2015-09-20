@@ -24,7 +24,7 @@ echo "Done."
 
 echo "Compile and install GPM 6"
 touch ${BASE_DIR}/log/gpm.log
-${BASE_DIR}/scripts/env/gpm-install.sg | tee -a ${BASE_DIR}/log/gpm.log
+${BASE_DIR}/scripts/env/gpm-install.sh | tee -a ${BASE_DIR}/log/gpm.log
 
 echo "Installing KeyStone..."
 ${BASE_DIR}/scripts/keystone/install-keystone-controller.sh | tee -a ${BASE_DIR}/log/controller.log
