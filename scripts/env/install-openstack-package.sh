@@ -6,6 +6,11 @@ echo "Done."
 
 echo "Installing OpenStack repo..."
 yum install -y ${OPENSTACK_REPO} > /dev/null
+
+OPENSTACK_REPO_BASE_URL=${OPENSTACK_REPO_BASE_URL:-https://repos.fedorapeople.org/repos/openstack/EOL/openstack-icehouse/epel-6/}
+
+sed -i "s,^baseurl=.*,baseurl=${OPENSTACK_REPO_BASE_URL}," /etc/yum.repos.d/rdo-release.repo
+
 echo "Done."
 
 echo "Install epel repo for CentOs..."

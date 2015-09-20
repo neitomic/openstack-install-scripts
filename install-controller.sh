@@ -1,6 +1,8 @@
 #!/bin/bash
 
 export BASE_DIR=$( cd `dirname $0` && pwd )
+mkdir ${BASE_DIR}/log
+touch ${BASE_DIR}/log/controller.log
 
 source ${BASE_DIR}/common/openstack.conf
 
@@ -14,7 +16,7 @@ echo "Installing OpenStack packages..."
 ${BASE_DIR}/scripts/env/install-openstack-package.sh | tee ${BASE_DIR}/log/controller.log
 echo "Done."
 echo "Installing SQL database..."
-${BASE_DIR}/scripts/env/install-mariadb.sh | tee ${BASE_DIR}/log/controller.log
+${BASE_DIR}/scripts/env/install-mysql-controller.sh | tee ${BASE_DIR}/log/controller.log
 echo "Done."
 echo "Installing Message queue (QPid) ..."
 ${BASE_DIR}/scripts/env/install-qpid.sh | tee ${BASE_DIR}/log/controller.log
