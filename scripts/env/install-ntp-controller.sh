@@ -4,6 +4,10 @@
 ##       Time synchronize service        ##
 ###########################################
 
+echo "##########################################"
+echo "##             NTP services             ##"
+echo "##########################################"
+
 echo "Installing ntp package..."
 yum -y install ntp > /dev/null
 echo "Done."
@@ -18,3 +22,5 @@ chkconfig ntpd on > /dev/null
 echo "Done."
 
 echo "DONE! Have a good day! :)"
+echo "##########################################"
+echo "##########################################"

@@ -6,14 +6,14 @@
 PARENT_DIR=$( cd `dirname $0`/../.. && pwd )
 BASE_DIR=${BASE_DIR:-$PARENT_DIR}
 
+echo "##########################################"
+echo "##        Database services             ##"
+echo "##########################################"
+
+
 echo "Install mysql packages..."
 yum install -y mysql mysql-server MySQL-python expect > /dev/null
 echo "Done."
-
-# systemctl enable mysql.service
-# systemctl start mysql.service
-
-# ../tools/auto_init_mysql.sh ${MYSQL_PASS} ${MYSQL_ORIGINAL_PASS}
 
 echo "Configuring and starting mysql service..."
 
@@ -33,3 +33,6 @@ echo "Done."
 echo "Auto initializing mysql...."
 ${BASE_DIR}/tools/auto_init_mysql.sh ${MYSQL_PASS} ${MYSQL_ORIGINAL_PASS}
 echo "DONE! Have a good day!"
+
+echo "##########################################"
+echo "##########################################"

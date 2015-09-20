@@ -3,6 +3,10 @@
 PARENT_DIR=$( cd `dirname $0`/.. && pwd )
 BASE_DIR=${BASE_DIR:-$PARENT_DIR}
 
+echo "##########################################"
+echo "##           Image services             ##"
+echo "##########################################"
+
 echo "Installing glance packages..."
 yum install -y openstack-glance python-glanceclient > /dev/null
 echo "Done."
@@ -90,5 +94,7 @@ chkconfig openstack-glance-registry on
 echo "Done."
 
 echo "DONE! Have a good day!"
+echo "##########################################"
+echo "##########################################"
 
 

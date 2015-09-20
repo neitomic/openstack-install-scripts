@@ -3,6 +3,10 @@
 PARENT_DIR=$( cd `dirname $0`/../.. && pwd )
 BASE_DIR=${BASE_DIR:-$PARENT_DIR}
 
+echo "##########################################"
+echo "##         Compute services             ##"
+echo "##########################################"
+
 echo "Installing OpenStack Nova packages..."
 yum install -y openstack-nova-compute > /dev/null
 echo "Done."
@@ -49,4 +53,5 @@ chkconfig openstack-nova-compute on
 echo "DONE! Have a good day! :)"
 
 
-
+echo "##########################################"
+echo "##########################################"

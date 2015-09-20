@@ -1,5 +1,10 @@
 #!/bin/bash
 
+echo "##########################################"
+echo "##        OpenStack packages            ##"
+echo "##########################################"
+
+
 echo "Install yum priority plugin..."
 yum install -y yum-plugin-priorities > /dev/null
 echo "Done."
@@ -30,3 +35,5 @@ yum -y upgrade > /dev/null
 echo "Done."
 
 echo "DONE! Have a good day! :)"
+echo "##########################################"
+echo "##########################################"

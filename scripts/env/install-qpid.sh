@@ -1,6 +1,10 @@
 #!/bin/bash
 #Qpid used in RHEL-6
 
+echo "##########################################"
+echo "##      Message Backend services        ##"
+echo "##########################################"
+
 echo "Installing QPid..."
 yum install -y qpid-cpp-server > /dev/null
 
@@ -12,3 +16,5 @@ service qpidd start > /dev/null
 chkconfig qpidd on > /dev/null
 
 echo "Done."
+echo "##########################################"
+echo "##########################################"

@@ -3,6 +3,10 @@
 PARENT_DIR=$( cd `dirname $0`/../.. && pwd )
 BASE_DIR=${BASE_DIR:-$PARENT_DIR}
 
+echo "##########################################"
+echo "##        Identity services             ##"
+echo "##########################################"
+
 echo "Installing OpenStack keystone packages..."
 yum install -y openstack-keystone python-keystoneclient > /dev/null
 echo "Done."
@@ -73,3 +77,6 @@ keystone endpoint-create \
   --publicurl=http://controller:5000/v2.0 \
   --internalurl=http://controller:5000/v2.0 \
   --adminurl=http://controller:35357/v2.0
+
+echo "##########################################"
+echo "##########################################"

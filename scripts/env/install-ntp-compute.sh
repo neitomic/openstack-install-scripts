@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "##########################################"
+echo "##             NTP services             ##"
+echo "##########################################"
 echo "Installing ntp package..."
 yum -y install ntp > /dev/null
 echo "Done."
@@ -17,3 +20,5 @@ service ntpd start > /dev/null
 chkconfig ntpd on > /dev/null
 
 echo "DONE! Have a good day! :)"
+echo "##########################################"
+echo "##########################################"
