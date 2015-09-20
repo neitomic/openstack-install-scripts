@@ -4,9 +4,11 @@ echo "${CONTROLLER_IP} controller" >> /etc/hosts
 
 COUNT="1"
 
-while [ -v "COMPUTE_${COUNT}" ];
+TMP="COMPUTE_${COUNT}"
+
+while [ ${!TMP} ];
 do
-	TMP="COMPUTE_${COUNT}"
 	echo "${!TMP} compute${COUNT}" >> /etc/hosts
 	COUNT=$[${COUNT}+1]
+	TMP="COMPUTE_${COUNT}"
 done
