@@ -3,6 +3,7 @@
 export BASE_DIR=$( cd `dirname $0` && pwd )
 mkdir ${BASE_DIR}/log
 touch ${BASE_DIR}/log/controller.log
+touch ${BASE_DIR}/log/verify.log
 
 source ${BASE_DIR}/common/openstack.conf
 
@@ -30,10 +31,18 @@ echo "Installing KeyStone..."
 ${BASE_DIR}/scripts/keystone/install-keystone-controller.sh | tee -a ${BASE_DIR}/log/controller.log
 echo "Done."
 
+echo "Verifing KeyStone service...."
+${BASE_DIR}/test/verify/keystone.sh | tee -a ${BASE_DIR}/log/verify.log
+
 echo "Installing Glance..."
 ${BASE_DIR}/scripts/glance/install-glance-controller.sh | tee -a ${BASE_DIR}/log/controller.log
 echo "Done."
 
+echo "Verifing Glance service...."
+${BASE_DIR}/test/verify/glance.sh | tee -a ${BASE_DIR}/log/verify.log
+
 echo "Installing Nova..."
 ${BASE_DIR}/scripts/nova/install-nova-controller.sh | tee -a ${BASE_DIR}/log/controller.log
 echo "Done."
+echo "Verifing Nova service...."
+${BASE_DIR}/test/verify/nova-controller.sh | tee -a ${BASE_DIR}/log/verify.log
