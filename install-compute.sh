@@ -15,9 +15,9 @@ echo "Installing OpenStack packages..."
 ${BASE_DIR}/scripts/env/install-openstack-package.sh | tee -a ${BASE_DIR}/log/compute.log
 echo "Done."
 
-echo "Compile and install GPM 6"
-touch ${BASE_DIR}/log/gpm.log
-${BASE_DIR}/scripts/env/gpm-install.sh | tee -a ${BASE_DIR}/log/gpm.log
+# echo "Compile and install GPM 6"
+# touch ${BASE_DIR}/log/gpm.log
+# ${BASE_DIR}/scripts/env/gpm-install.sh | tee -a ${BASE_DIR}/log/gpm.log
 
 
 echo "Installing Nova..."

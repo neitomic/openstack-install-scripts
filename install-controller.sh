@@ -23,9 +23,9 @@ echo "Installing Message queue (QPid) ..."
 ${BASE_DIR}/scripts/env/install-qpid.sh | tee -a ${BASE_DIR}/log/controller.log
 echo "Done."
 
-echo "Compile and install GPM 6"
-touch ${BASE_DIR}/log/gpm.log
-${BASE_DIR}/scripts/env/gpm-install.sh | tee -a ${BASE_DIR}/log/gpm.log
+# echo "Compile and install GPM 6"
+# touch ${BASE_DIR}/log/gpm.log
+# ${BASE_DIR}/scripts/env/gpm-install.sh | tee -a ${BASE_DIR}/log/gpm.log
 
 echo "Installing KeyStone..."
 ${BASE_DIR}/scripts/keystone/install-keystone-controller.sh | tee -a ${BASE_DIR}/log/controller.log

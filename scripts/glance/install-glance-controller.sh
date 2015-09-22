@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PARENT_DIR=$( cd `dirname $0`/.. && pwd )
+PARENT_DIR=$( cd `dirname $0`/../.. && pwd )
 BASE_DIR=${BASE_DIR:-$PARENT_DIR}
 
 echo "##########################################"
@@ -51,7 +51,7 @@ openstack-config --set /etc/glance/glance-api.conf keystone_authtoken \
 openstack-config --set /etc/glance/glance-api.conf keystone_authtoken \
   admin_user glance
 openstack-config --set /etc/glance/glance-api.conf keystone_authtoken \
-  admin_password GLANCE_PASS
+  admin_password ${GLANCE_PASS}
 openstack-config --set /etc/glance/glance-api.conf paste_deploy \
   flavor keystone
 openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken \
@@ -67,7 +67,7 @@ openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken \
 openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken \
   admin_user glance
 openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken \
-  admin_password GLANCE_PASS
+  admin_password ${GLANCE_PASS}
 openstack-config --set /etc/glance/glance-registry.conf paste_deploy \
   flavor keystone
 echo "Done."
