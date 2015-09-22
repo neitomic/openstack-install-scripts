@@ -14,7 +14,7 @@ echo "Done."
 echo "Configuring nova service..."
 MY_IP=$(${BASE_DIR}/tools/getIPAddress.sh)
 
-if [ "${DEBUG}" == "ON" ] then
+if [ "${DEBUG}" == "ON" ]; then
 	openstack-config --set /etc/nova/nova.conf \
 	DEFAULT verbose True
 fi

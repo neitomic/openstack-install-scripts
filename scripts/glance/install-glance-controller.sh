@@ -39,7 +39,7 @@ keystone user-role-add --user=glance --tenant=service --role=admin
 
 echo "Configuring glance..."
 
-if [ "${DEBUG}" == "ON" ] then
+if [ "${DEBUG}" == "ON" ]; then
   openstack-config --set /etc/nova/nova.conf \
   DEFAULT verbose True
 fi
