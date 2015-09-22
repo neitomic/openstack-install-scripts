@@ -14,7 +14,13 @@ echo "Done."
 echo "Configuring nova service..."
 MY_IP=$(${BASE_DIR}/tools/getIPAddress.sh)
 
-openstack-config --set /etc/nova/nova.conf database connection mysql://nova:${NOVA_DBPASS}@controller/nova
+if [ "${DEBUG}" == "ON" ] then
+	openstack-config --set /etc/nova/nova.conf \
+	DEFAULT verbose True
+fi
+
+openstack-config --set /etc/nova/nova.conf \
+ database connection mysql://nova:${NOVA_DBPASS}@controller/nova
 openstack-config --set /etc/nova/nova.conf DEFAULT auth_strategy keystone
 openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_uri http://controller:5000
 openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_host controller

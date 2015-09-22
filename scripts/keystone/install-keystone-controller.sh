@@ -11,6 +11,11 @@ echo "Installing OpenStack keystone packages..."
 yum install -y openstack-keystone python-keystoneclient > /dev/null
 echo "Done."
 
+if [ "${DEBUG}" == "ON" ] then
+  openstack-config --set /etc/nova/nova.conf \
+  DEFAULT verbose True
+fi
+
 openstack-config --set /etc/keystone/keystone.conf \
    database connection mysql://keystone:${KEYSTONE_DBPASS}@controller/keystone
 
