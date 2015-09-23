@@ -17,8 +17,7 @@ openstack-config --set /etc/nova/nova.conf \
   database connection mysql://nova:${NOVA_DBPASS}@controller/nova
 
 if [ "${DEBUG}" == "ON" ]; then
-	openstack-config --set /etc/nova/nova.conf \
-	DEFAULT verbose True
+	openstack-config --set /etc/nova/nova.conf DEFAULT verbose True
 fi
 
 openstack-config --set /etc/nova/nova.conf \
