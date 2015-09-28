@@ -47,5 +47,5 @@ echo "Done."
 echo "Verifing Nova service...."
 ${BASE_DIR}/test/verify/nova-controller.sh | tee -a ${BASE_DIR}/log/verify.log
 
-echo "Configure nova network..."
-${BASE_DIR}/scripts/network/nova/controller.sh | tee -a ${BASE_DIR}/log/controller.log
+# echo "Configure nova network..."
+# ${BASE_DIR}/scripts/network/nova/controller.sh | tee -a ${BASE_DIR}/log/controller.log
