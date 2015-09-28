@@ -12,7 +12,7 @@ yum install -y openstack-keystone python-keystoneclient > /dev/null
 echo "Done."
 
 if [ "${DEBUG}" == "ON" ]; then
-  openstack-config --set /etc/nova/nova.conf DEFAULT verbose True
+  openstack-config --set /etc/keystone/keystone.conf DEFAULT verbose True
 fi
 
 openstack-config --set /etc/keystone/keystone.conf \

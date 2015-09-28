@@ -40,7 +40,8 @@ keystone user-role-add --user=glance --tenant=service --role=admin
 echo "Configuring glance..."
 
 if [ "${DEBUG}" == "ON" ]; then
-  openstack-config --set /etc/nova/nova.conf DEFAULT verbose True
+  openstack-config --set /etc/glance/glance-api.conf DEFAULT verbose True
+  openstack-config --set /etc/glance/glance-registry.conf  DEFAULT verbose True
 fi
 
 openstack-config --set /etc/glance/glance-api.conf keystone_authtoken \
