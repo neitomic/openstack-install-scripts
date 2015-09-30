@@ -3,28 +3,30 @@
 PARENT_DIR=$( cd `dirname $0`/../../.. && pwd )
 BASE_DIR=${BASE_DIR:-$PARENT_DIR}
 
-echo "Create neutron database..."
-NEUTRON_SQL_FILE=${NEUTRON_SQL_FILE:-$BASE_DIR/sql_scripts/create_db_neutron.sql}
-sed -i "s/NEUTRON_DBPASS/${NEUTRON_DBPASS}/g" ${NEUTRON_SQL_FILE}
-mysql -u "root" "-p${MYSQL_PASS}" < ${NEUTRON_SQL_FILE}
-sed -i "s/${NEUTRON_DBPASS}/NEUTRON_DBPASS/g" ${NEUTRON_SQL_FILE}
-echo "Done."
 
-source ${BASE_DIR}/admin-openrc.sh
+echo "Prerequisites..."
 
-keystone user-create --name neutron --pass ${NEUTRON_PASS} --email neutron@example.com
-keystone user-role-add --user neutron --tenant service --role admin
-keystone service-create --name neutron --type network --description "OpenStack Networking"
-keystone endpoint-create \
-  --service-id $(keystone service-list | awk '/ network / {print $2}') \
-  --publicurl http://controller:9696 \
-  --adminurl http://controller:9696 \
-  --internalurl http://controller:9696
+SYSCTL_CONF=/etc/sysctl.conf
 
-yum install -y openstack-neutron openstack-neutron-ml2 python-neutronclient > /dev/null
+grep -q "^net.ipv4.conf.all.rp_filter=" ${SYSCTL_CONF} && sed "s/^net.ipv4.conf.all.rp_filter=.*/net.ipv4.conf.all.rp_filter=0/" -i ${SYSCTL_CONF} || 
+    sed "$ a\net.ipv4.conf.all.rp_filter=0" -i ${SYSCTL_CONF}
 
-openstack-config --set /etc/neutron/neutron.conf database connection \
-  mysql://neutron:${NEUTRON_DBPASS}@controller/neutron
+grep -q "^net.ipv4.conf.default.rp_filter=" ${SYSCTL_CONF} && sed "s/^net.ipv4.conf.default.rp_filter=.*/net.ipv4.conf.default.rp_filter=0/" -i ${SYSCTL_CONF} || 
+    sed "$ a\net.ipv4.conf.default.rp_filter=0" -i ${SYSCTL_CONF}
+
+grep -q "^net.bridge.bridge-nf-call-arptables=" ${SYSCTL_CONF} && sed "s/^net.bridge.bridge-nf-call-arptables=.*/net.bridge.bridge-nf-call-arptables=1/" -i ${SYSCTL_CONF} || 
+    sed "$ a\net.bridge.bridge-nf-call-arptables=1" -i ${SYSCTL_CONF}
+
+grep -q "^net.bridge.bridge-nf-call-iptables=" ${SYSCTL_CONF} && sed "s/^net.bridge.bridge-nf-call-iptables=.*/net.bridge.bridge-nf-call-iptables=1/" -i ${SYSCTL_CONF} || 
+    sed "$ a\net.bridge.bridge-nf-call-iptables=1" -i ${SYSCTL_CONF}
+
+grep -q "^net.bridge.bridge-nf-call-ip6tables=" ${SYSCTL_CONF} && sed "s/^net.bridge.bridge-nf-call-ip6tables=.*/net.bridge.bridge-nf-call-ip6tables=1/" -i ${SYSCTL_CONF} || 
+    sed "$ a\net.bridge.bridge-nf-call-ip6tables=1" -i ${SYSCTL_CONF}
+
+sysctl -p
+
+
+yum install -y openstack-neutron-ml2 openstack-neutron-openvswitch > /dev/null
 
 openstack-config --set /etc/neutron/neutron.conf DEFAULT \
   auth_strategy keystone
@@ -49,21 +51,6 @@ openstack-config --set /etc/neutron/neutron.conf DEFAULT \
   qpid_hostname controller
 
 openstack-config --set /etc/neutron/neutron.conf DEFAULT \
-  notify_nova_on_port_status_changes True
-openstack-config --set /etc/neutron/neutron.conf DEFAULT \
-  notify_nova_on_port_data_changes True
-openstack-config --set /etc/neutron/neutron.conf DEFAULT \
-  nova_url http://controller:8774/v2
-openstack-config --set /etc/neutron/neutron.conf DEFAULT \
-  nova_admin_username nova
-openstack-config --set /etc/neutron/neutron.conf DEFAULT \
-  nova_admin_tenant_id $(keystone tenant-list | awk '/ service / { print $2 }')
-openstack-config --set /etc/neutron/neutron.conf DEFAULT \
-  nova_admin_password NOVA_PASS
-openstack-config --set /etc/neutron/neutron.conf DEFAULT \
-  nova_admin_auth_url http://controller:35357/v2.0
-
-openstack-config --set /etc/neutron/neutron.conf DEFAULT \
   core_plugin ml2
 openstack-config --set /etc/neutron/neutron.conf DEFAULT \
   service_plugins router
@@ -76,10 +63,26 @@ openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 \
   mechanism_drivers openvswitch
 openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_gre \
   tunnel_id_ranges 1:1000
+
+
+MY_IP_TMP=$(${BASE_DIR}/tools/getIPAddress.sh)
+INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS=${MY_IP:-$MY_IP_TMP}
+
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs \
+  local_ip INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs \
+  tunnel_type gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs \
+  enable_tunneling True
 openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup \
   firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
 openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup \
   enable_security_group True
+
+service openvswitch start
+chkconfig openvswitch on
+
+ovs-vsctl add-br br-int
 
 openstack-config --set /etc/nova/nova.conf DEFAULT \
   network_api_class nova.network.neutronv2.api.API
@@ -104,20 +107,10 @@ openstack-config --set /etc/nova/nova.conf DEFAULT \
 
 ln -s plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
 
-service openstack-nova-api restart
-service openstack-nova-scheduler restart
-service openstack-nova-conductor restart
-service neutron-server start
-chkconfig neutron-server on
+cp /etc/init.d/neutron-openvswitch-agent /etc/init.d/neutron-openvswitch-agent.orig
+sed -i 's,plugins/openvswitch/ovs_neutron_plugin.ini,plugin.ini,g' /etc/init.d/neutron-openvswitch-agent
 
+service openstack-nova-compute restart
 
-#####################
-### configure the metadata agent
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-  service_neutron_metadata_proxy true
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-  neutron_metadata_proxy_shared_secret ${METADATA_SECRET}
-
-service openstack-nova-api restart
-
-##################################
+service neutron-openvswitch-agent start
+chkconfig neutron-openvswitch-agent on

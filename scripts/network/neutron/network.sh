@@ -47,7 +47,7 @@ openstack-config --set /etc/neutron/neutron.conf keystone_authtoken \
 openstack-config --set /etc/neutron/neutron.conf keystone_authtoken \
   admin_user neutron
 openstack-config --set /etc/neutron/neutron.conf keystone_authtoken \
-  admin_password NEUTRON_PASS
+  admin_password ${NEUTRON_PASS}
 openstack-config --set /etc/neutron/neutron.conf DEFAULT \
   rpc_backend neutron.openstack.common.rpc.impl_qpid
 openstack-config --set /etc/neutron/neutron.conf DEFAULT \
@@ -89,23 +89,14 @@ openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT \
 openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT \
   admin_user neutron
 openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT \
-  admin_password NEUTRON_PASS
+  admin_password ${NEUTRON_PASS}}
 openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT \
   nova_metadata_ip controller
 openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT \
-  metadata_proxy_shared_secret METADATA_SECRET
+  metadata_proxy_shared_secret ${METADATA_SECRET}
 
 
-#####################
-### on Controller node
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-  service_neutron_metadata_proxy true
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-  neutron_metadata_proxy_shared_secret METADATA_SECRET
 
-service openstack-nova-api restart
-
-##################################
 
 echo "Configure the Modular Layer 2 (ML2) plug-in..."
 openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 \
@@ -116,6 +107,9 @@ openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 \
   mechanism_drivers openvswitch
 openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_gre \
   tunnel_id_ranges 1:1000
+
+MY_IP=$(${BASE_DIR}/tools/getIPAddress.sh)
+INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS=${MY_IP}
 openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs \
   local_ip INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS
 openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs \

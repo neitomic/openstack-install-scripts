@@ -11,6 +11,11 @@ echo "Done."
 echo "Installing Network Time Protocol ..."
 ${BASE_DIR}/scripts/env/install-ntp-compute.sh | tee -a ${BASE_DIR}/log/compute.log
 echo "Done."
+
+echo "Installing MySQL for compute node..."
+${BASE_DIR}/scripts/env/install-mysql-compute.sh | tee -a ${BASE_DIR}/log/compute.log
+echo "Done."
+
 echo "Installing OpenStack packages..."
 ${BASE_DIR}/scripts/env/install-openstack-package.sh | tee -a ${BASE_DIR}/log/compute.log
 echo "Done."
