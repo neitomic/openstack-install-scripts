@@ -8,4 +8,4 @@ echo "###       Verifing nova service        ###"
 echo "#----------------------------------------#"
 
 source ${BASE_DIR}/admin-openrc.sh
-nova image-list
+nova image-list	

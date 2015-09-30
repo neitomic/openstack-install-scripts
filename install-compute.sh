@@ -24,6 +24,6 @@ echo "Installing Nova..."
 ${BASE_DIR}/scripts/nova/install-nova-compute.sh | tee -a ${BASE_DIR}/log/compute.log
 echo "Done."
 
-# echo "Installing nova network..."
-# ${BASE_DIR}/scripts/network/nova/compute.sh | tee -a ${BASE_DIR}/log/compute.log
-# echo "Done."
+echo "Installing nova network..."
+${BASE_DIR}/scripts/network/nova/compute.sh | tee -a ${BASE_DIR}/log/compute.log
+echo "Done."
