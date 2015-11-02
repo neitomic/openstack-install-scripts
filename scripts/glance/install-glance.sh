@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PARENT_DIR=$( cd `dirname $0`/.. && pwd )
+PARENT_DIR=$( cd `dirname $0`/../.. && pwd )
 BASE_DIR=${BASE_DIR:-$PARENT_DIR}
 
 echo "Create glance database and gain permision..."
@@ -12,17 +12,6 @@ sed -i "s/${GLANCE_DBPASS}/GLANCE_DBPASS/g" ${GLANCE_SQL_FILE}
 echo "Done."
 
 source ${BASE_DIR}/admin-openrc.sh
-
-#keystone user-create --name glance --pass ${GLANCE_PASS}
-#keystone user-role-add --user glance --tenant service --role admin
-#keystone service-create --name glance --type image \
-#  --description "OpenStack Image Service"
-#keystone endpoint-create \
-#  --service-id $(keystone service-list | awk '/ image / {print $2}') \
-#  --publicurl http://controller:9292 \
-#  --internalurl http://controller:9292 \
-#  --adminurl http://controller:9292 \
-#  --region regionOne
 
 echo "Create glance user..."
 openstack user create --password ${GLANCE_PASS} glance

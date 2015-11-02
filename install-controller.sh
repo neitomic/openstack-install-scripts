@@ -2,6 +2,9 @@
 
 export BASE_DIR=$( cd `dirname $0` && pwd )
 
+mkdir -p ${BASE_DIR}/log
+touch ${BASE_DIR}/log/controller.log
+
 source ${BASE_DIR}/common/openstack.conf
 
 echo "Add hostname to /etc/host ..."
