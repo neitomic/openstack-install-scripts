@@ -35,6 +35,10 @@ echo "Done."
 echo "Configuring nova service..."
 sed -i "/^\[database\]$/a connection = mysql://nova:${NOVA_DBPASS}@controller/nova" /etc/nova/nova.conf
 
+if [ "${DEBUG}" == "ON" ]; then
+  sed -i "/^\[DEFAULT\]$/a verbose = True" /etc/nova/nova.conf
+fi
+
 sed -i "/^\[DEFAULT\]$/a rpc_backend = rabbit\n\
 auth_strategy = keystone\n\
 my_ip = ${CONTROLLER_IP}\n\

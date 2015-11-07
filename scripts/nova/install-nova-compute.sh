@@ -10,6 +10,10 @@ echo "Done."
 echo "Configuring nova service..."
 MY_IP=$(${BASE_DIR}/tools/getIPAddress.sh)
 
+if [ "${DEBUG}" == "ON" ]; then
+	sed -i "/^\[DEFAULT\]$/a verbose = True" /etc/nova/nova.conf
+fi
+
 sed -i "/^\[DEFAULT\]$/a rpc_backend = rabbit\n\
 auth_strategy = keystone\n\
 my_ip = ${MY_IP}\n\
@@ -40,6 +44,8 @@ if [ ${KVM_SUPPORT} -eq 0 ]; then
 	sed -i "/^\[libvirt\]$/a virt_type = qemu" /etc/nova/nova.conf
 fi
 echo "Done."
+
+yum -y install libvirt-daemon-config-nwfilter libvirt-daemon-driver-nwfilter
 
 echo "Enable and start nova services..."
 systemctl enable libvirtd.service openstack-nova-compute.service

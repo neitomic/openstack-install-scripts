@@ -24,6 +24,11 @@ systemctl start memcached.service > /dev/null
 echo "Done."
 
 echo "Adding keystone configuration..."
+
+if [ "${DEBUG}" == "ON" ]; then
+  sed -i "/^\[DEFAULT\]$/a verbose = True" /etc/nova/nova.conf
+fi
+
 sed -i "/^\[DEFAULT\]$/a admin_token = ${TOKEN}" /etc/keystone/keystone.conf
 sed -i "/^\[database\]$/a connection = mysql://keystone:${KEYSTONE_DBPASS}@controller/keystone" /etc/keystone/keystone.conf
 sed -i "/^\[memcache\]$/a servers = localhost:11211" /etc/keystone/keystone.conf

@@ -37,6 +37,11 @@ yum install -y openstack-glance python-glance python-glanceclient > /dev/null
 echo "Done."
 
 echo "Adding glance configuration..."
+
+if [ "${DEBUG}" == "ON" ]; then
+	sed -i "/^\[DEFAULT\]$/a verbose = True" /etc/nova/nova.conf
+fi
+
 sed -i "/^\[database\]$/a connection = mysql://glance:${GLANCE_DBPASS}@controller/glance" /etc/glance/glance-api.conf
 sed -i "/^\[keystone_authtoken\]$/a auth_uri = http://controller:5000\n\
 auth_url = http://controller:35357\n\
