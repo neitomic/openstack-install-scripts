@@ -56,7 +56,8 @@ sed -i "/^\[paste_deploy\]$/a flavor = keystone" /etc/glance/glance-api.conf
 sed -i "/^\[glance_store\]$/a default_store = file\n\
 filesystem_store_datadir = /var/lib/glance/images/" /etc/glance/glance-api.conf
 
-sed -i "/^\[DEFAULT\]$/a notification_driver = noop" /etc/glance/glance-api.conf
+sed -i "/^\[DEFAULT\]$/a notification_driver = noop\n\
+container_formats=ami,ari,aki,bare,ovf,ova,docker" /etc/glance/glance-api.conf
 
 sed -i "/^\[database\]$/a connection = mysql://glance:${GLANCE_DBPASS}@controller/glance" /etc/glance/glance-registry.conf
 sed -i "/^\[keystone_authtoken\]$/a auth_uri = http://controller:5000\n\

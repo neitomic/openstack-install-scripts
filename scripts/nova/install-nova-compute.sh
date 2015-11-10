@@ -20,7 +20,8 @@ my_ip = ${MY_IP}\n\
 vnc_enabled = True\n\
 vncserver_listen = 0.0.0.0\n\
 vncserver_proxyclient_address = ${MY_IP}\n\
-novncproxy_base_url = http://controller:6080/vnc_auto.html" /etc/nova/nova.conf
+novncproxy_base_url = http://controller:6080/vnc_auto.html\n\
+compute_driver=novadocker.virt.docker.DockerDriver" /etc/nova/nova.conf
 
 sed -i "/^\[oslo_messaging_rabbit\]$/a rabbit_host = controller\n\
 rabbit_userid = openstack\n\
@@ -39,10 +40,12 @@ sed -i "/^\[glance\]$/a host = controller" /etc/nova/nova.conf
 
 sed -i "/^\[oslo_concurrency\]$/a lock_path = /var/lib/nova/tmp" /etc/nova/nova.conf
 
-KVM_SUPPORT=$(${BASE_DIR}/tools/kvmSupport.sh)
-if [ ${KVM_SUPPORT} -eq 0 ]; then 
-	sed -i "/^\[libvirt\]$/a virt_type = qemu" /etc/nova/nova.conf
-fi
+# KVM_SUPPORT=$(${BASE_DIR}/tools/kvmSupport.sh)
+# if [ ${KVM_SUPPORT} -eq 0 ]; then 
+# 	sed -i "/^\[libvirt\]$/a virt_type = qemu" /etc/nova/nova.conf
+# fi
+sed -i "/^\[libvirt\]$/a virt_type = docker" /etc/nova/nova.conf
+
 echo "Done."
 
 yum -y install libvirt-daemon-config-nwfilter libvirt-daemon-driver-nwfilter

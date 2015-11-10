@@ -4,6 +4,7 @@ export BASE_DIR=$( cd `dirname $0` && pwd )
 
 mkdir -p ${BASE_DIR}/log
 touch ${BASE_DIR}/log/compute.log
+touch ${BASE_DIR}/log/docker.log
 
 source ${BASE_DIR}/common/openstack.conf
 
@@ -17,6 +18,9 @@ echo "Installing OpenStack packages..."
 ${BASE_DIR}/scripts/env/install-openstack-package.sh | tee ${BASE_DIR}/log/compute.log
 echo "Done."
 
+echo "Installing docker"
+${BASE_DIR}/scripts/docker/install-docker.sh | tee ${BASE_DIR}/log/docker.log
+echo "Done."
 
 echo "Installing Nova..."
 ${BASE_DIR}/scripts/nova/install-nova-compute.sh | tee ${BASE_DIR}/log/compute.log
