@@ -2,9 +2,12 @@
 PARENT_DIR=$( cd `dirname $0`/../.. && pwd )
 BASE_DIR=${BASE_DIR:-$PARENT_DIR}
 
-yum -y install python-pip git
+yum -y install python-pip git gcc
 
 curl -sSL https://get.docker.com | sh
+
+systemctl enable docker
+systemctl start docker
 
 cd ${BASE_DIR}
 
