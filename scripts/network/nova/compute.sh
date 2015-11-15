@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yum install openstack-nova-network openstack-nova-api > /dev/null
+yum -y install openstack-nova-network openstack-nova-api > /dev/null
 
 sed -i "/^\[DEFAULT\]$/a network_api_class = nova.network.api.API\n\
 security_group_api = nova\n\

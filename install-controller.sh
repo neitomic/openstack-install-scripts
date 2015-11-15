@@ -34,3 +34,7 @@ echo "Done."
 echo "Installing Nova..."
 ${BASE_DIR}/scripts/nova/install-nova-controller.sh | tee ${BASE_DIR}/log/controller.log
 echo "Done."
+
+echo "Configuring Nova-Network..."
+${BASE_DIR}/scripts/network/nova/controller.sh | tee ${BASE_DIR}/log/controller.log
+echo "Done."

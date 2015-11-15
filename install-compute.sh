@@ -18,10 +18,10 @@ echo "Installing OpenStack packages..."
 ${BASE_DIR}/scripts/env/install-openstack-package.sh | tee ${BASE_DIR}/log/compute.log
 echo "Done."
 
-echo "Installing docker"
-${BASE_DIR}/scripts/docker/install-docker.sh | tee ${BASE_DIR}/log/docker.log
-echo "Done."
-
 echo "Installing Nova..."
 ${BASE_DIR}/scripts/nova/install-nova-compute.sh | tee ${BASE_DIR}/log/compute.log
+echo "Done."
+
+echo "Installing nova-network..."
+${BASE_DIR}/scripts/network/nova/compute.sh | tee ${BASE_DIR}/log/compute.log
 echo "Done."

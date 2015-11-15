@@ -50,6 +50,10 @@ echo "Done."
 
 yum -y install libvirt-daemon-config-nwfilter libvirt-daemon-driver-nwfilter
 
+echo "Installing docker components..."
+${BASE_DIR}/scripts/docker/install-docker.sh
+echo "Done."
+
 echo "Enable and start nova services..."
 systemctl enable libvirtd.service openstack-nova-compute.service
 systemctl start libvirtd.service openstack-nova-compute.service
