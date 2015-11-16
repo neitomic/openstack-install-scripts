@@ -4,8 +4,8 @@ yum -y install openstack-nova-network openstack-nova-api > /dev/null
 
 sed -i "/^\[DEFAULT\]$/a network_api_class = nova.network.api.API\n\
 security_group_api = nova\n\
-firewall_driver = nova.virt.libvirt.firewall.IptablesFirewallDriver\n\
-network_manager = nova.virt.firewall.NoopFirewallDriver\n\
+firewall_driver = nova.virt.firewall.NoopFirewallDriver\n\
+network_manager = nova.network.manager.FlatDHCPManager\n\
 network_size = 254\n\
 allow_same_net_traffic = False\n\
 multi_host = True\n\
