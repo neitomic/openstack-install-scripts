@@ -6,6 +6,8 @@ yum -y install python-pip git gcc
 
 curl -sSL https://get.docker.com | sh
 
+usermod -aG docker nova
+
 systemctl enable docker
 systemctl start docker
 
