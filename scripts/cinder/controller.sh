@@ -34,7 +34,7 @@ openstack endpoint create \
   --region RegionOne \
   volumev2
 
-yum install openstack-cinder python-cinderclient python-oslo-db
+yum install -y openstack-cinder python-cinderclient python-oslo-db
 
 cp /usr/share/cinder/cinder-dist.conf /etc/cinder/cinder.conf
 chown -R cinder:cinder /etc/cinder/cinder.conf
