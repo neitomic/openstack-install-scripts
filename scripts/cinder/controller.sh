@@ -34,10 +34,10 @@ openstack endpoint create \
   --region RegionOne \
   volumev2
 
-yum install openstack-cinder python-cinderclient python-oslo-db
+yum install -y openstack-cinder python-cinderclient python-oslo-db
 
-cp /usr/share/cinder/cinder-dist.conf /etc/cinder/cinder.conf
-chown -R cinder:cinder /etc/cinder/cinder.conf
+# cp /usr/share/cinder/cinder-dist.conf /etc/cinder/cinder.conf
+# chown -R cinder:cinder /etc/cinder/cinder.conf
 
 
 if [ "${DEBUG}" == "ON" ]; then
@@ -63,7 +63,10 @@ project_name = service\n\
 username = cinder\n\
 password = ${CINDER_PASS}" /etc/cinder/cinder.conf
 
-sed -i "/^\[oslo_concurrency\]$/a lock_path = /var/lock/cinder" /etc/cinder/cinder.conf
+echo "
+
+[oslo_concurrency]
+lock_path = /var/lock/cinder" >> /etc/cinder/cinder.conf
 
 
 su -s /bin/sh -c "cinder-manage db sync" cinder
