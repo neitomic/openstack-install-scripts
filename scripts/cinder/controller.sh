@@ -63,7 +63,10 @@ project_name = service\n\
 username = cinder\n\
 password = ${CINDER_PASS}" /etc/cinder/cinder.conf
 
-sed -i "/^\[oslo_concurrency\]$/a lock_path = /var/lock/cinder" /etc/cinder/cinder.conf
+echo "
+
+[oslo_concurrency]
+lock_path = /var/lock/cinder" >> /etc/cinder/cinder.conf
 
 
 su -s /bin/sh -c "cinder-manage db sync" cinder
