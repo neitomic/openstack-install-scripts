@@ -38,7 +38,3 @@ echo "Done."
 echo "Configuring Nova-Network..."
 ${BASE_DIR}/scripts/network/nova/controller.sh | tee ${BASE_DIR}/log/controller.log
 echo "Done."
-
-echo "Installing Block Storage (Cinder) ..."
-${BASE_DIR}/scripts/cinder/controller.sh | tee ${BASE_DIR}/log/controller.log
-echo "Done."

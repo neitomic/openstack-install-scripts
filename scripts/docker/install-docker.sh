@@ -13,7 +13,7 @@ systemctl start docker
 
 cd ${BASE_DIR}
 
-git clone -b test/kilo-cinder https://github.com/thanhtien522/nova-docker.git
+git clone https://github.com/openstack/nova-docker.git
 cd nova-docker
 python setup.py install
 
