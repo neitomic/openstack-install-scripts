@@ -8,7 +8,7 @@ yum install -y openstack-nova-compute sysfsutils > /dev/null
 echo "Done."
 
 echo "Configuring nova service..."
-MY_IP=$(${BASE_DIR}/tools/getIPAddress.sh)
+MY_IP=$(${BASE_DIR}/tools/getIPAddress.sh ${CONTROLLER_INTERFACE})
 
 if [ "${DEBUG}" == "ON" ]; then
 	sed -i "/^\[DEFAULT\]$/a verbose = True" /etc/nova/nova.conf

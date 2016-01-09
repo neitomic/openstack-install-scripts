@@ -13,8 +13,8 @@ send_arp_for_ha = True\n\
 share_dhcp_address = True\n\
 force_dhcp_release = True\n\
 flat_network_bridge = br100\n\
-flat_interface = ${INTERFACE_NAME}\n\
-public_interface = ${INTERFACE_NAME}" /etc/nova/nova.conf
+flat_interface = ${COMPUTE_INTERFACE}\n\
+public_interface = ${COMPUTE_INTERFACE}" /etc/nova/nova.conf
 
 
 systemctl enable openstack-nova-network.service openstack-nova-metadata-api.service

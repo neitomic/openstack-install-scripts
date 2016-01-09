@@ -1,4 +1,4 @@
 #!/bin/bash
-NETWORK_PREFIX=${NETWORK_PREFIX:-172.28.181}
-IPADDR=$(ifconfig | grep ${NETWORK_PREFIX} | awk '{print $2}')
+INTF=$1
+IPADDR=$(ip addr | grep inet | grep ${INTF} | awk -F" " '{print $2}'| sed -e 's/\/.*$//')
 echo ${IPADDR}

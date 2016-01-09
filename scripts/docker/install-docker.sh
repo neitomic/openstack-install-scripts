@@ -13,7 +13,12 @@ systemctl start docker
 
 cd ${BASE_DIR}
 
-git clone -b stable/kilo https://github.com/thanhtien522/nova-docker.git
+if [[ -n "$NOVA_DOCKER_BRANCH" ]]; then
+	git clone -b ${NOVA_DOCKER_BRANCH} ${NOVA_DOCKER_GIT}
+else
+	git clone ${NOVA_DOCKER_GIT}
+fi
+
 cd nova-docker
 python setup.py install
 

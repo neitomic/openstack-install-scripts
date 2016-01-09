@@ -7,6 +7,8 @@ touch ${BASE_DIR}/log/controller.log
 
 source ${BASE_DIR}/common/openstack.conf
 
+${BASE_DIR}/common/prepare_openrc.sh
+
 echo "Add hostname to /etc/host ..."
 ${BASE_DIR}/tools/addHost.sh | tee ${BASE_DIR}/log/controller.log
 echo "Done."
